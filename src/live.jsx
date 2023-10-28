@@ -82,6 +82,7 @@ setTimeout(() => {
       room.broadcastEvent({ type: 'click', button: button.id });
     });
   });
+  twemoji.parse(document.body);
 }, 1000);
 
 document.addEventListener('pointermove', (e) => {

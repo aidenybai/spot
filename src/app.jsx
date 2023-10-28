@@ -96,7 +96,8 @@ function Control({ children, action, name, disabled }) {
       id={name}
       style={{
         padding: '0rem',
-        fontSize: name.startsWith('rotate') ? '2rem' : '4rem',
+        fontSize: '4rem',
+        transform: name.startsWith('rotate') ? 'scale(0.5)' : null,
       }}
       onClick={action}
       disabled={disabled}
