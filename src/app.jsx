@@ -9,9 +9,9 @@ const sendHttp = (action) => {
     right: 'D',
     'rotate-left': 'Q',
     'rotate-right': 'E',
-    sit: 'T',
-    stand: 'N',
-    twerk: 'X',
+    sit: 'V',
+    stand: 'F',
+    twerk: 'T',
   };
 
   fetch('https://spot-talk-production.up.railway.app/action', {
@@ -29,7 +29,7 @@ function App() {
   useEffect(() => {
     let timeout;
     if (needsCooldown) {
-      timeout = setTimeout(() => setNeedsCooldown(false), 750);
+      timeout = setTimeout(() => setNeedsCooldown(false), 200);
     }
     return () => {
       if (timeout) clearTimeout(timeout);
@@ -100,6 +100,30 @@ function App() {
           ▶️
         </Control>
       </ArrowKeysLayout>
+      <Control
+        action={() => {
+          sendHttp('sit');
+          setNeedsCooldown(true);
+        }}
+        name="sit"
+      >
+        🧘‍♂️
+      </Control>
+      <Control
+        action={() => {
+          sendHttp('stand');
+          setNeedsCooldown(true);
+        }}
+        name="stand">
+          🧍‍♂️
+        </Control>
+      <Control
+        action={() => {
+          sendHttp('twerk');
+          setNeedsCooldown(true);
+        }}
+        name="twerk"
+      >🍑💦</Control>
     </div>
   );
 }
