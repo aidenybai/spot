@@ -8,6 +8,7 @@ const sendHttp = (action) => {
     left: 'A',
     right: 'D',
   };
+  console.log(action);
 
   fetch('https://spot-talk-production.up.railway.app/action', {
     method: 'POST',
