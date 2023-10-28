@@ -7,8 +7,12 @@ const sendHttp = (action) => {
     down: 'S',
     left: 'A',
     right: 'D',
+    'rotate-left': 'L',
+    'rotate-right': 'R',
+    sit: 'T',
+    stand: 'N',
+    twerk: 'X',
   };
-  console.log(action);
 
   fetch('https://spot-talk-production.up.railway.app/action', {
     method: 'POST',
