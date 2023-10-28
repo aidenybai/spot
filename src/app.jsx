@@ -24,7 +24,7 @@ function App() {
           }}
           name="rotate-left"
         >
-          ↩️
+          ⤴️
         </Control>
         <Control
           disabled={needsCooldown}
@@ -42,7 +42,7 @@ function App() {
           }}
           name="rotate-right"
         >
-          ↪️
+          ⤵️
         </Control>
         <Control
           disabled={needsCooldown}
@@ -97,7 +97,7 @@ function Control({ children, action, name, disabled }) {
       style={{
         padding: '0rem',
         fontSize: '4rem',
-        transform: name.startsWith('rotate') ? 'scale(0.5)' : null,
+        transform: name.startsWith('rotate') ? `scale(0.5) rotate(270deg)` : null,
       }}
       onClick={action}
       disabled={disabled}

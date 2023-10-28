@@ -75,15 +75,25 @@ room.subscribe('others', (others, event) => {
   }
 });
 
-setTimeout(() => {
-  document.querySelectorAll('button').forEach((button) => {
-    button.addEventListener('click', (e) => {
-      e.preventDefault();
-      room.broadcastEvent({ type: 'click', button: button.id });
+// when #root is mounted:
+
+const root = document.querySelector('#root');
+
+const observer = new MutationObserver(() => {
+  requestAnimationFrame(() => {
+    document.querySelectorAll('button').forEach((button) => {
+      button.addEventListener('click', (e) => {
+        e.preventDefault();
+        room.broadcastEvent({ type: 'click', button: button.id });
+      });
     });
+    twemoji.parse(document.body);
   });
-  twemoji.parse(document.body);
-}, 1000);
+});
+observer.observe(root, {
+  childList: true,
+  subtree: true,
+});
 
 document.addEventListener('pointermove', (e) => {
   e.preventDefault();
