@@ -107,8 +107,11 @@ document.addEventListener('pointermove', (e) => {
 
 document.addEventListener('touchmove', (e) => {
   e.preventDefault();
+  // scale x and y to be between 0 and 1:
+  const x = e.clientX / window.innerWidth;
+  const y = e.clientY / window.innerHeight;
   room.updatePresence({
-    cursor: { x: Math.round(e.clientX), y: Math.round(e.clientY) },
+    cursor: { x, y },
   });
 });
 
