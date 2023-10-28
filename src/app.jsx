@@ -42,6 +42,7 @@ function App() {
         <Control
           disabled={needsCooldown}
           action={() => {
+            sendHttp('rotate-left');
             setNeedsCooldown(true);
           }}
           name="rotate-left"
@@ -61,6 +62,7 @@ function App() {
         <Control
           disabled={needsCooldown}
           action={() => {
+            sendHttp('rotate-right');
             setNeedsCooldown(true);
           }}
           name="rotate-right"
