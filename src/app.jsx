@@ -9,7 +9,7 @@ const sendHttp = (action) => {
     right: 'D',
   };
 
-  fetch('http://localhost:3000/action', {
+  fetch('https://spot-talk-production.up.railway.app/action', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
