@@ -14,24 +14,29 @@ const { room } = client.enterRoom('spot-party', {
 
 const cursorsContainer = document.getElementById('cursors-container');
 
+let lastClick = 0;
+
 room.subscribe('my-presence', () => {});
 room.subscribe('event', ({ event }) => {
   if (event.type !== 'click') return;
   const el = document.getElementById(event.button);
 
-  requestAnimationFrame(() => {
-    el.animate(
-      [
-        { transform: 'scale(1)', filter: 'brightness(1)' },
-        { transform: 'scale(1.1)', filter: 'brightness(1.1)' },
-        { transform: 'scale(1)', filter: 'brightness(1)' },
-      ],
-      {
-        duration: 300,
-        easing: 'ease-in-out',
-      }
-    );
-  });
+  if (performance.now() - lastClick > 64) {
+    lastClick = performance.now();
+    requestAnimationFrame(() => {
+      el.animate(
+        [
+          { transform: 'scale(1)', filter: 'brightness(1)' },
+          { transform: 'scale(1.1)', filter: 'brightness(1.1)' },
+          { transform: 'scale(1)', filter: 'brightness(1)' },
+        ],
+        {
+          duration: 300,
+          easing: 'ease-in-out',
+        }
+      );
+    });
+  }
 });
 
 room.subscribe('others', (others, event) => {
