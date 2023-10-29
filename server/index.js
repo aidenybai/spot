@@ -53,13 +53,24 @@ app.post(
 );
 
 app.get('/kill', (req, res) => {
-  if (req.query.key !== process.env.KILL_KEY) return;
+  if (req.query.key !== process.env.MAIN_KEY) return res.status(403).send('no');
   clients = [];
   actions = [];
   res.send('ok');
 });
 
+app.get('/info', (_req, res) => {
+  const used = process.memoryUsage().heapUsed / 1024 / 1024;
+  res.json({
+    memoryUsage: `${Math.round(used * 100) / 100} MB`,
+    clients: clients.length,
+    actions: actions.length,
+  });
+});
+
 app.get('/actions', cors(), (req, res) => {
+  if (req.query.key !== process.env.MAIN_KEY) return res.status(403).send('no');
+
   res.setHeader('Content-Type', 'text/plain');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
