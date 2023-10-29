@@ -8,6 +8,11 @@ import threading
 import time
 from collections import OrderedDict
 
+import openai
+import os
+
+openai.api_key = os.environ['OPENAI_API_KEY']
+
 import bosdyn.api.basic_command_pb2 as basic_command_pb2
 import bosdyn.api.power_pb2 as PowerServiceProto
 # import bosdyn.api.robot_command_pb2 as robot_command_pb2
@@ -110,7 +115,7 @@ class WasdInterface(object):
         ord('\t'): self._quit_program,
         ord('T'): self._toggle_time_sync,
         ord(' '): self._toggle_estop,
-        ord('c'): self._circle_move
+        ord('c'): self._circle_move,
         ord('r'): self._self_right,
         ord('P'): self._toggle_power,
         ord('p'): self._toggle_power,
@@ -180,6 +185,30 @@ class WasdInterface(object):
     """Get latest robot state proto."""
     return self._robot_state_task.proto
 
+  def get_query(command: str):
+
+    query = f"""
+    Output the sequence of robotic actions for the following command: {command}. Limit the sequence to 10 actions or less, only output the necessary motions.
+    """
+  
+    completion = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        temperature=0.1,
+        messages=[
+            {
+                "role":
+                "system",
+                "content":
+                "You are a controller for the Boston Dynamics robot dog Spot. You take in natural language commands and output a sequence of one letter command actions. W means forward, A means left, S means backward, D means right, V for twerk, Q for turn left, E for turn right, B to play dead. Don't output any other commands."
+            },
+            {
+                "role": "user",
+                "content": query
+            },
+        ])
+    return completion.choices[0].message.content
+
+
   def drive(self):
     with ExitCheck() as self._exit_check:
       try:
@@ -191,6 +220,11 @@ class WasdInterface(object):
           try:
             cmds = input("enter input> ")
             print(self._estop_str(), self._power_state_str())
+
+          if cmds.startswith('hey spot,'):
+              action = self.get_query(cmds[10:]).lower()
+              cmds = action
+            
             for c in cmds:
               print(c)
               self._drive_cmd(c)
@@ -366,7 +400,7 @@ class WasdInterface(object):
                               RobotCommandBuilder.synchro_stand_command())
 
   def _circle_move(self):
-    self._velocity_cmd_helper('circle_move', v_x=VELOCITY_BASE_SPEED/, v_rot=VELOCITY_BASE_ANGULAR*3, dur=2)
+    self._velocity_cmd_helper('circle_move', v_x=VELOCITY_BASE_SPEED/2.0, v_rot=VELOCITY_BASE_ANGULAR*3.0, dur=2)
 
   def _move_forward(self):
     self._velocity_cmd_helper('move_forward', v_x=VELOCITY_BASE_SPEED)
