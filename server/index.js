@@ -57,8 +57,10 @@ app.get('/info', (_req, res) => {
   const used = process.memoryUsage().heapUsed / 1024 / 1024;
   res.json({
     memoryUsage: `${Math.round(used * 100) / 100} MB`,
-    clients: clients.length,
-    actions: actions.length,
+    clientsCount: clients.length,
+    actionsCount: actions.length,
+    clients: clients.map((c) => c.id),
+    actions,
   });
 });
 
