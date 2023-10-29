@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/src/style.css" />
+    <script
+      src="https://unpkg.com/twemoji@latest/dist/twemoji.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>
+     <title>spotty spot spot</title>
+  </head>
+  <body>
+    <video id="video"></video>
+
+    <script defer>
+        console.log('page loaded')
+        const video = document.getElementById('video');
+        console.log(video)
+            const poseNet = ml5.poseNet(video, modelLoaded);  
+    
+            function modelLoaded() {  
+                console.log('Model Loaded!'); 
+                // Call your loading function here
+                myLoadingFunction();
+            }
+    
+            poseNet.on('pose', (results) => {   poses = results; });
+    
+            function myLoadingFunction() {
+                console.log('Loading code executed!');
+            }
+        </script>    
+  </body>
+</html>

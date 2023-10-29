@@ -1,4 +1,5 @@
 import Handsfree from 'handsfree';
+
 const handsfree = new Handsfree({
   debug: true,
   pose: {
@@ -25,6 +26,12 @@ document.addEventListener('handsfree-data', (event) => {
   const y = landmarkIndicies.map((i) => data.pose.poseLandmarks[i].y);
   const avgX = x.reduce((a, b) => a + b, 0) / x.length;
   const avgY = y.reduce((a, b) => a + b, 0) / y.length;
+
+  // check if y (of shoulders — 11, 12) is at like 10% of total — if user is squatting, spot should twerk
+  if (data.pose.poseLandmarks[11].y < 0.15) {
+    console.log('squat');
+    // sendHttp('squat');
+  } 
 
   if (lastAverage) {
     const diffX = avgX - lastAverage[0];
