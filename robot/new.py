@@ -110,6 +110,7 @@ class WasdInterface(object):
         ord('\t'): self._quit_program,
         ord('T'): self._toggle_time_sync,
         ord(' '): self._toggle_estop,
+        ord('c'): self._circle_move
         ord('r'): self._self_right,
         ord('P'): self._toggle_power,
         ord('p'): self._toggle_power,
@@ -296,7 +297,7 @@ class WasdInterface(object):
                                                     pitch=abs(pitch))
         self._start_robot_command(
             'aidentwerk',
-            RobotCommandBuilder.synchro_stand_command(
+            RobotCommandBuilder.synchro_stand_command(wq
                 footprint_R_body=footprint_R_body))
         time.sleep(time_per_pose)
       print("hi")
@@ -364,6 +365,9 @@ class WasdInterface(object):
     self._start_robot_command('stand',
                               RobotCommandBuilder.synchro_stand_command())
 
+  def _circle_move(self):
+    self._velocity_cmd_helper('circle_move', v_x=VELOCITY_BASE_SPEED/, v_rot=VELOCITY_BASE_ANGULAR*3, dur=2)
+
   def _move_forward(self):
     self._velocity_cmd_helper('move_forward', v_x=VELOCITY_BASE_SPEED)
 
@@ -385,13 +389,13 @@ class WasdInterface(object):
   def _stop(self):
     self._start_robot_command('stop', RobotCommandBuilder.stop_command())
 
-  def _velocity_cmd_helper(self, desc='', v_x=0.0, v_y=0.0, v_rot=0.0):
+  def _velocity_cmd_helper(self, desc='', v_x=0.0, v_y=0.0, v_rot=0.0, dur=VELOCITY_CMD_DURATION):
     self._start_robot_command(
         desc,
         RobotCommandBuilder.synchro_velocity_command(v_x=v_x,
                                                      v_y=v_y,
                                                      v_rot=v_rot),
-        end_time_secs=time.time() + VELOCITY_CMD_DURATION)
+        end_time_secs=time.time() + dur)
 
   def _stow(self):
     self._start_robot_command('stow', RobotCommandBuilder.arm_stow_command())
