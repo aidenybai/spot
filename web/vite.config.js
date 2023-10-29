@@ -7,8 +7,9 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
-        admin: resolve(__dirname, 'pose.html'),
+        index: resolve(__dirname, 'index.html'),
+        pose: resolve(__dirname, 'pose.html'),
+        gesture: resolve(__dirname, 'gesture.html'),
       },
     },
   },

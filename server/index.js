@@ -17,40 +17,34 @@ const limiter = rateLimit({
 });
 
 app.use(limiter);
+app.use(cors());
 app.use(express.json());
 
-app.post(
-  '/action',
-  cors({
-    origin: 'https://spot.party',
-    optionsSuccessStatus: 200,
-  }),
-  (req, res) => {
-    const action = req.body.action;
-    const whitelist = ['W', 'A', 'S', 'D', 'Q', 'E', 'T'];
+app.post('/action', (req, res) => {
+  const action = req.body.action;
+  const whitelist = ['W', 'A', 'S', 'D', 'Q', 'E', 'T'];
 
-    if (!whitelist.includes(action)) {
-      return res.status(400).json({ error: 'Invalid action' });
-    }
+  if (!whitelist.includes(action)) {
+    return res.status(400).json({ error: 'Invalid action' });
+  }
 
-    // 5% chance to add a T (twerk)
-    if (action === 'T') {
-      if (Math.random() < 0.05) {
-        actions.push('T');
-        return res.status(200).json({ status: 'Action added' });
-      } else {
-        return res.status(400).json({ error: 'Action not added' });
-      }
-    }
-
-    if (actions.length < MAX_N) {
-      actions.push(action);
+  // 5% chance to add a T (twerk)
+  if (action === 'T') {
+    if (Math.random() < 0.05) {
+      actions.push('T');
       return res.status(200).json({ status: 'Action added' });
     } else {
-      return res.status(400).json({ error: 'Action queue is full' });
+      return res.status(400).json({ error: 'Action not added' });
     }
   }
-);
+
+  if (actions.length < MAX_N) {
+    actions.push(action);
+    return res.status(200).json({ status: 'Action added' });
+  } else {
+    return res.status(400).json({ error: 'Action queue is full' });
+  }
+});
 
 app.get('/kill', (req, res) => {
   if (req.query.key !== process.env.MAIN_KEY) return res.status(403).send('no');
@@ -68,7 +62,7 @@ app.get('/info', (_req, res) => {
   });
 });
 
-app.get('/actions', cors(), (req, res) => {
+app.get('/actions', (req, res) => {
   if (req.query.key !== process.env.MAIN_KEY) return res.status(403).send('no');
 
   res.setHeader('Content-Type', 'text/plain');
