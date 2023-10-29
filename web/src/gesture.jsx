@@ -67,20 +67,34 @@ document.addEventListener('handsfree-data', (event) => {
   }
 
   if (consensus > 0) {
-    if (direction === 'left') clearInterval(interval);
+    if (direction === 'left') {
+      clearInterval(interval);
+      interval = undefined;
+    }
     direction = 'right';
   } else if (consensus < 0) {
-    if (direction === 'right') clearInterval(interval);
+    if (direction === 'right') {
+      clearInterval(interval);
+      interval = undefined;
+    }
     direction = 'left';
   }
 
-  interval = setInterval(() => {
+  if (consensus === 0) {
+    clearInterval(interval);
+    interval = undefined;
+    return;
+  }
+  if (interval) return;
+  const cb = () => {
     if (direction === 'right') {
       sendHttp('right');
     } else if (direction === 'left') {
       sendHttp('left');
     }
-  }, 1000);
+  };
+  interval = setInterval(cb, 1000);
+  cb();
 });
 
 console.log(handsfree);
