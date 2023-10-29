@@ -50,6 +50,28 @@ handsfree.useGesture({
   ],
 });
 
+handsfree.useGesture({
+  name: 'forward',
+  algorithm: 'fingerpose',
+  models: 'hands',
+  confidence: 7.5,
+  description: [
+    ['addCurl', 'Thumb', 'HalfCurl', 1],
+    ['addDirection', 'Thumb', 'VerticalUp', 1],
+    ['addCurl', 'Index', 'FullCurl', 1],
+    ['addDirection', 'Index', 'DiagonalUpRight', 1],
+    ['addCurl', 'Middle', 'FullCurl', 1],
+    ['addDirection', 'Middle', 'DiagonalUpRight', 0.30434782608695654],
+    ['addDirection', 'Middle', 'VerticalUp', 1],
+    ['addCurl', 'Ring', 'FullCurl', 1],
+    ['addDirection', 'Ring', 'VerticalUp', 1],
+    ['addCurl', 'Pinky', 'FullCurl', 1],
+    ['addDirection', 'Pinky', 'VerticalUp', 1],
+    ['addDirection', 'Pinky', 'DiagonalUpLeft', 0.6666666666666666],
+  ],
+  enabled: true,
+});
+
 handsfree.start();
 
 let interval;
@@ -57,40 +79,29 @@ let direction;
 let consensus;
 document.addEventListener('handsfree-data', (event) => {
   const data = event.detail;
-  if (!data.hands || !data.hands?.gesture) return;
-
-  consensus = 0;
-  for (const gesture of data.hands.gesture) {
-    if (!gesture) continue;
-    if (gesture.name === 'left') consensus--;
-    if (gesture.name === 'right') consensus++;
-  }
-
-  if (consensus > 0) {
-    if (direction === 'left') {
-      clearInterval(interval);
-      interval = undefined;
-    }
-    direction = 'right';
-  } else if (consensus < 0) {
-    if (direction === 'right') {
-      clearInterval(interval);
-      interval = undefined;
-    }
-    direction = 'left';
-  }
-
-  if (consensus === 0) {
-    clearInterval(interval);
-    interval = undefined;
+  if (!data.hands || !data.hands?.gesture || !data.hands?.gesture?.[0]) {
+    if (interval) clearInterval(interval);
     return;
   }
-  if (interval) return;
+
+  switch (data.hands.gesture[0]) {
+    case 'left':
+      direction = 'left';
+      break;
+    case 'right':
+      direction = 'right';
+      break;
+    case 'forward':
+      direction = 'up';
+      break;
+  }
   const cb = () => {
     if (direction === 'right') {
       sendHttp('right');
     } else if (direction === 'left') {
       sendHttp('left');
+    } else if (direction === 'up') {
+      sendHttp('up');
     }
   };
   interval = setInterval(cb, 1000);
