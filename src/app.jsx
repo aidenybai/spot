@@ -9,8 +9,6 @@ const sendHttp = (action) => {
     right: 'D',
     'rotate-left': 'Q',
     'rotate-right': 'E',
-    sit: 'V',
-    stand: 'F',
     twerk: 'T',
   };
 
@@ -100,30 +98,18 @@ function App() {
           ▶️
         </Control>
       </ArrowKeysLayout>
-      <Control
-        action={() => {
-          sendHttp('sit');
-          setNeedsCooldown(true);
-        }}
-        name="sit"
-      >
-        🧘‍♂️
-      </Control>
-      <Control
-        action={() => {
-          sendHttp('stand');
-          setNeedsCooldown(true);
-        }}
-        name="stand">
-          🧍‍♂️
+      <center>
+        <Control
+          disabled={needsCooldown}
+          action={() => {
+            sendHttp('twerk');
+            setNeedsCooldown(true);
+          }}
+          name="twerk"
+        >
+          🍑💦
         </Control>
-      <Control
-        action={() => {
-          sendHttp('twerk');
-          setNeedsCooldown(true);
-        }}
-        name="twerk"
-      >🍑💦</Control>
+      </center>
     </div>
   );
 }
