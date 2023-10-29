@@ -17,36 +17,49 @@ const limiter = rateLimit({
 });
 
 app.use(limiter);
-app.use(cors());
 app.use(express.json());
 
-app.post('/action', (req, res) => {
-  const action = req.body.action;
-  const whitelist = ['W', 'A', 'S', 'D', 'Q', 'E', 'T'];
+app.post(
+  '/action',
+  cors({
+    origin: 'https://spot.party',
+    optionsSuccessStatus: 200,
+  }),
+  (req, res) => {
+    const action = req.body.action;
+    const whitelist = ['W', 'A', 'S', 'D', 'Q', 'E', 'T'];
 
-  if (!whitelist.includes(action)) {
-    return res.status(400).json({ error: 'Invalid action' });
-  }
+    if (!whitelist.includes(action)) {
+      return res.status(400).json({ error: 'Invalid action' });
+    }
 
-  // 5% chance to add a T (twerk)
-  if (action === 'T') {
-    if (Math.random() < 0.05) {
-      actions.push('T');
+    // 5% chance to add a T (twerk)
+    if (action === 'T') {
+      if (Math.random() < 0.05) {
+        actions.push('T');
+        return res.status(200).json({ status: 'Action added' });
+      } else {
+        return res.status(400).json({ error: 'Action not added' });
+      }
+    }
+
+    if (actions.length < MAX_N) {
+      actions.push(action);
       return res.status(200).json({ status: 'Action added' });
     } else {
-      return res.status(400).json({ error: 'Action not added' });
+      return res.status(400).json({ error: 'Action queue is full' });
     }
   }
+);
 
-  if (actions.length < MAX_N) {
-    actions.push(action);
-    return res.status(200).json({ status: 'Action added' });
-  } else {
-    return res.status(400).json({ error: 'Action queue is full' });
-  }
+app.get('/kill', (req, res) => {
+  if (req.query.key !== process.env.KILL_KEY) return;
+  clients = [];
+  actions = [];
+  res.send('ok');
 });
 
-app.get('/actions', (req, res) => {
+app.get('/actions', cors(), (req, res) => {
   res.setHeader('Content-Type', 'text/plain');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
