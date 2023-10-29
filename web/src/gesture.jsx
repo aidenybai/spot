@@ -8,6 +8,18 @@ const handsfree = new Handsfree({
   },
 });
 
+const throttle = (func, delay) => {
+  let enqueued = false;
+  return (...args) => {
+    if (enqueued) return;
+    enqueued = true;
+    setTimeout(() => {
+      func(...args);
+      enqueued = false;
+    }, delay);
+  };
+};
+
 handsfree.useGesture({
   name: 'left',
   algorithm: 'fingerpose',
@@ -69,43 +81,45 @@ handsfree.useGesture({
     ['addDirection', 'Pinky', 'VerticalUp', 1],
     ['addDirection', 'Pinky', 'DiagonalUpLeft', 0.6666666666666666],
   ],
-  enabled: true,
 });
 
 handsfree.start();
 
-let interval;
 let direction;
-let consensus;
+
+const cb = () => {
+  console.log(direction);
+  if (direction === 'right') {
+    sendHttp('right');
+  } else if (direction === 'left') {
+    sendHttp('left');
+  } else if (direction === 'up') {
+    sendHttp('up');
+  }
+};
+const cbt = throttle(cb, 699);
+
 document.addEventListener('handsfree-data', (event) => {
   const data = event.detail;
-  if (!data.hands || !data.hands?.gesture || !data.hands?.gesture?.[0]) {
-    if (interval) clearInterval(interval);
+  if (!data.hands || !data.hands?.gesture) {
     return;
   }
 
-  switch (data.hands.gesture[0]) {
-    case 'left':
-      direction = 'left';
-      break;
-    case 'right':
-      direction = 'right';
-      break;
-    case 'forward':
-      direction = 'up';
-      break;
-  }
-  const cb = () => {
-    if (direction === 'right') {
-      sendHttp('right');
-    } else if (direction === 'left') {
-      sendHttp('left');
-    } else if (direction === 'up') {
-      sendHttp('up');
+  if (data.hands.gesture[0]) {
+    switch (data.hands.gesture[0].name) {
+      case 'left':
+        direction = 'left';
+        break;
+      case 'right':
+        direction = 'right';
+        break;
+      case 'forward':
+        direction = 'up';
+        break;
     }
-  };
-  interval = setInterval(cb, 1000);
-  cb();
+  }
+  if (!direction) return;
+  cbt();
 });
 
 console.log(handsfree);

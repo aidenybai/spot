@@ -88,7 +88,7 @@ function App() {
           }}
           name="twerk"
         >
-          🍑💦
+          🍑
         </Control>
       </center>
     </div>
