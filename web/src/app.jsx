@@ -1,7 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import React, { useState, useEffect } from 'react';
 
-const sendHttp = (action) => {
+export const sendHttp = (action) => {
   const ACTIONS = {
     up: 'W',
     down: 'S',
