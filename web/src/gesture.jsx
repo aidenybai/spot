@@ -1,5 +1,5 @@
 import Handsfree from 'handsfree';
-import { sendHttp } from './app';
+import { sendHttp } from './http';
 
 const handsfree = new Handsfree({
   hands: {
@@ -54,6 +54,7 @@ handsfree.start();
 
 let interval;
 let direction;
+let consensus;
 document.addEventListener('handsfree-data', (event) => {
   const data = event.detail;
   if (!data.hands || !data.hands?.gesture) return;
