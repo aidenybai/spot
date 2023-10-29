@@ -67,13 +67,20 @@ document.addEventListener('handsfree-data', (event) => {
   }
 
   if (consensus > 0) {
-    if (direction === 'left') clearInterval(interval);
+    if (direction === 'left') {
+      clearInterval(interval);
+      interval = undefined;
+    }
     direction = 'right';
   } else if (consensus < 0) {
-    if (direction === 'right') clearInterval(interval);
+    if (direction === 'right') {
+      clearInterval(interval);
+      interval = undefined;
+    }
     direction = 'left';
   }
 
+  if (interval) return;
   interval = setInterval(() => {
     if (direction === 'right') {
       sendHttp('right');
